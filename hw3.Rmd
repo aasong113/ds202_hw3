@@ -1,0 +1,82 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## HW 3
+Author: Anthony Song
+Github: aasong113
+
+## Tips at Restaurants
+```{r}
+library(ggplot2)
+data(tips, package="reshape2")
+head(tips)
+```
+
+
+1.  How many parties did the waiter serve? Store the number in `numParty` and print. 
+```{r}
+numParty <- nrow(tips)
+print(numParty)
+```
+2. What are the types of variables in the data frame `tips`? Include the code and also explain verbally.
+```{r}
+str(tips)
+```
+## There are 7 variables in this data set named tips. 2 numeric, 4 factor and 1 integer. 
+
+
+3. Create a vector named `day` containing the day of visits in `tips`. The factor levels should be ordered from Thursday to Sunday. Print the variable.
+```{r}
+day <- tips$day
+day <- factor(day, levels = c("Thur", "Fri", "Sat", "Sun"))
+day
+
+```
+4. Create a data frame named `female5` containing the meal paid by a female payer in a party with size greater than or euqal to 5. Print the data frame.
+```{r}
+female5 <- tips[which(tips$sex=='Female' & tips$size >= 5),];
+female5
+```
+5. How does the tipping amount (`tip`) depend on the overall bill (`total_bill`)? Use the `ggplot2` package to make a chart. Describe the relationship in words.  
+```{r}
+ggplot(tips, aes(x=total_bill, y=tip)) + geom_point()+xlab("Total Bill")+ylab("Tip")
+```
+
+## From this we can see that there is a somewhat linear trend. As the total bill increases, we see that, for the most part, the tip also increases. 
+
+6. Describe at least two types of anomalies in the previous plot. What do they mean?
+
+
+## The two types of anomolies are, the low bill with a high tip, and the high bill with a low tip. The low bill with the high tip means that the waiter must have done an exceptional job and the customer was very happy and therefore tipped a large percentage of the bill. The high bill with a low tip means that the waiter must have done a bad job and was not liked by the custome, hence the low percentage tip. 
+
+7. Introduce a variable `tiprate` into the data set which stands for the rate of tips. What is the average rate for tips? Explain verbally. 
+```{r}
+tips$tiprate <- (tips$tip / tips$total_bill);
+mean(tips$tiprate)
+```
+
+## The average rate for tips in my interpretation is the average amount of tip money per dollar spent on the total bill. Higher tiprate means better customer satisfaction. 
+
+8. Make a boxplot of the tip rate by time. The x-axis should be ordered by lunch and then dinner. Use `ggplot2` to make a chart. Verbally explain the chart.
+```{r}
+ggplot(tips, aes(x=time, y=tiprate)) + geom_boxplot()
+
+```
+
+## The tip rate box plots show that during the dinner time the 25-75th percent quartiles are more evenly distributed. Also large outlier tip rates are relevant during dinner. The distribution of the box shows us that the 25-50th percentile is more concentrated than the 50-75th percentile. 
+
+9. How does smoking behavior and gender of the person who pays impact the relationship between tip and total bill? Find a visualization that incorporates all four variables. Interpret the result.
+```{r}
+ggplot(data=tips, aes(x=total_bill, y=tip)) + facet_grid(smoker~sex) + geom_point() + xlab("Total Bill") + ylab("Tip")
+```
+
+## From the results above we can see that smokers tend to tip less when the bill becomes higher for male payers. We can see in male non-smokers, the trend follows a more positive linear pattern as the bill increases. But when we look at the male smokers we observe a weak trend with a smaller increase in the tip as the total bill increases. For female smokers, the ttrends are about the same. Although it can be noted for both sexes, smoking causes the tip vs. total_bill points to be more widespread, as compared to the non-smokers which have more concentrated points. 
+
+
+10. Use ggplot2 to find a graphical summary of the relationship between day of the week and gender of the person paying the bill. What can you say about this relationship?
+```{r}
+ggplot(tips, aes(x=day, fill=sex)) + geom_bar(position="fill")
+```
+
+## For the most part, men pay the bill. This is seen especially on the weekends (Sat and Sun), this is possibly due to more date nights. During the week, the numbers are split more to the 50/50 range. This is most likely because people are trying to do a quick lunch or dinner and are with their friends or colleagues. 
+
